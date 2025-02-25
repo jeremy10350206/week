@@ -5,19 +5,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>愛的紀念網站</title>
     <style>
-        body {
+        * {
             margin: 0;
-            overflow: hidden;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column;
             height: 100vh;
             background: black;
             color: white;
             text-align: center;
-            flex-direction: column;
             font-family: Arial, sans-serif;
         }
+
+        .hidden {
+            display: none;
+        }
+
         .start-button, .card-button {
             padding: 15px 30px;
             background: rgba(255, 182, 193, 0.9);
@@ -29,22 +38,19 @@
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             margin-top: 20px;
         }
+
         .start-button:hover, .card-button:hover {
             transform: scale(1.1);
             box-shadow: 0px 0px 40px rgba(255, 182, 193, 1);
         }
-        .hidden { display: none; }
-        
+
+        /* 3D 相簿 */
         .scene {
-            width: 300px;
-            height: 300px;
+            width: 250px;
+            height: 250px;
             perspective: 1000px;
         }
-        .cube-container {
-            width: 100%;
-            height: 100%;
-            position: relative;
-        }
+
         .cube {
             width: 100%;
             height: 100%;
@@ -52,53 +58,65 @@
             transform-style: preserve-3d;
             animation: rotateCube 10s infinite linear;
         }
+
         .face {
             position: absolute;
-            width: 300px;
-            height: 300px;
+            width: 250px;
+            height: 250px;
             background-size: cover;
             background-position: center;
             border: 3px solid white;
             box-shadow: 0px 0px 30px rgba(255, 255, 255, 0.9);
             transform-origin: center;
         }
-        .front  { transform: rotateY(  0deg) translateZ(150px); background-image: url('photo1.jpg'); }
-        .back   { transform: rotateY(180deg) translateZ(150px); background-image: url('photo2.jpg'); }
-        .left   { transform: rotateY(-90deg) translateZ(150px); background-image: url('photo3.jpg'); }
-        .right  { transform: rotateY( 90deg) translateZ(150px); background-image: url('photo4.jpg'); }
-        .top    { transform: rotateX( 90deg) translateZ(150px); background-image: url('photo5.jpg'); }
-        .bottom { transform: rotateX(-90deg) translateZ(150px); background-image: url('photo6.jpg'); }
-        
+
+        .front  { transform: rotateY(  0deg) translateZ(125px); background-image: url('photo1.jpg'); }
+        .back   { transform: rotateY(180deg) translateZ(125px); background-image: url('photo2.jpg'); }
+        .left   { transform: rotateY(-90deg) translateZ(125px); background-image: url('photo3.jpg'); }
+        .right  { transform: rotateY( 90deg) translateZ(125px); background-image: url('photo4.jpg'); }
+        .top    { transform: rotateX( 90deg) translateZ(125px); background-image: url('photo5.jpg'); }
+        .bottom { transform: rotateX(-90deg) translateZ(125px); background-image: url('photo6.jpg'); }
+
         @keyframes rotateCube {
             from { transform: rotateX(0deg) rotateY(0deg); }
             to   { transform: rotateX(360deg) rotateY(360deg); }
         }
-        .card-page {
+
+        /* 卡片頁面 */
+        .card-container {
             display: none;
-            width: 50vw;
-            height: 40vh;
-            background: linear-gradient(135deg, #f5e1c8, #ffffff);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            font-size: 20px;
-            color: black;
-            position: absolute;
+            position: fixed;
             top: 50%;
             left: 50%;
-            transform: translate(-50%, -50%) scale(0.9);
-            box-shadow: 0px 5px 20px rgba(128, 98, 63, 0.5);
-            border-radius: 15px;
+            transform: translate(-50%, -50%);
+            width: 85vw;
+            max-width: 400px;
+            height: auto;
+            max-height: 80vh;
+            background: white;
+            color: black;
+            text-align: center;
             padding: 20px;
-            animation: fadeIn 0.5s ease forwards;
+            border-radius: 15px;
+            box-shadow: 0px 5px 20px rgba(128, 98, 63, 0.5);
             border: 2px solid #a88c6b;
+            overflow-y: auto;
         }
+
+        .card-content {
+            font-size: 16px;
+            line-height: 1.5;
+            text-align: center;
+            padding: 10px;
+        }
+
         .nav-buttons {
             margin-top: 15px;
             display: flex;
+            justify-content: center;
             gap: 10px;
         }
+
         .nav-buttons button {
             padding: 10px 20px;
             border: none;
@@ -109,6 +127,7 @@
             transition: 0.3s;
             font-size: 16px;
         }
+
         .nav-buttons button:hover {
             background: #8b6b4e;
         }
@@ -119,168 +138,86 @@
     <audio id="bg-music" loop>
         <source src="music.mp3" type="audio/mpeg">
     </audio>
+
     <div id="gallery" class="hidden">
         <div class="scene">
-            <div class="cube-container">
-                <div class="cube">
-                    <div class="face front"></div>
-                    <div class="face back"></div>
-                    <div class="face left"></div>
-                    <div class="face right"></div>
-                    <div class="face top"></div>
-                    <div class="face bottom"></div>
-                </div>
+            <div class="cube">
+                <div class="face front"></div>
+                <div class="face back"></div>
+                <div class="face left"></div>
+                <div class="face right"></div>
+                <div class="face top"></div>
+                <div class="face bottom"></div>
             </div>
         </div>
-        <button class="card-button" onclick="showCardPage()">查看卡片</button>
+        <button class="card-button" onclick="showCard()">查看卡片</button>
     </div>
-    <div id="card-pages" class="hidden">
-      <div class="card-page" id="card1">
-          <h2>💖 給我最愛的寶寶 💖</h2>
-          <p>七天，說長不長，說短不短，但對我來說，這是世界上最珍貴的七天。</p>
-          <p>七天前，我們在一起了，從那一刻開始，我的世界多了一道最耀眼的光。</p>
-          <p>每一天，每一個瞬間，我都覺得好幸運，因為我有妳。</p>
-          <div class="nav-buttons">
-              <button onclick="nextPage(1)">下一頁 ➡️</button>
-          </div>
-      </div>
-  
-      <div class="card-page" id="card2">
-          
-          <p>有時候我會想，</p>
-          <p>如果我沒有遇見妳，這個世界會變成什麼樣？</p>
-          <p>可能還是平淡，可能日子依舊過得去，</p>
-          <p>但一定沒有現在這麼溫暖，這麼快樂。</p>
-          <p>妳就像是燈塔，在我生命裡發光，</p>
-          <p>讓我即使在人生的黑夜裡，也有方向，也有勇氣。</p>
-          <div class="nav-buttons">
-              <button onclick="prevPage(0)">⬅️ 上一頁</button>
-              <button onclick="nextPage(2)">下一頁 ➡️</button>
-          </div>
-      </div>
-  
-      <div class="card-page" id="card3">
-          <p>這七天裡，我記得的每一個畫面，</p>
-          <p>週三那天，</p>
-          <p>第一次牽起妳的手，第一次看見妳的笑，</p>
-          <p>第一次和妳對視時，心跳不自覺加快的瞬間。</p>
-          <p>這些畫面，</p>
-          <p>在我腦海裡反覆播放，永不褪色。</p>
-          <div class="nav-buttons">
-              <button onclick="prevPage(1)">⬅️ 上一頁</button>
-              <button onclick="nextPage(3)">下一頁 ➡️</button>
-          </div>
-      </div>
-  
-      <div class="card-page" id="card4">
-          <p>寶寶，今天是我們在一起的第七天。</p>
-          <p>七天不算長，但我已經無法想像沒有妳的日子。</p>
-          <p>每當我想到未來，想到會有妳在裡面，</p>
-          <p>我就覺得，人生好像變得更加有意義了。</p>
-          <p>七天只是開始，我想陪妳走過更多的七天、七十天、七十年……</p>
-          <p>直到我們一起坐在夕陽下，白髮蒼蒼，仍牽著彼此的手。</p>
-          <div class="nav-buttons">
-              <button onclick="prevPage(2)">⬅️ 上一頁</button>
-              <button onclick="nextPage(4)">下一頁 ➡️</button>
-          </div>
-      </div>
-  
-      <div class="card-page" id="card5">
-          <p>寒與豔陽</p>
-          <p>寒是冬夜的靜謐，無聲無息，卻蘊藏無盡的溫柔。</p>
-          <p>豔陽是晨曦的熱烈，炙熱卻不刺眼，只為她而發光。</p>
-          <p>寒夜裡，豔陽走近了，不驚擾寒的寧靜，卻為寒帶來光與暖。</p>
-          <p>這一生，寒與豔陽不再分離，因為彼此已是唯一。</p>
-          <div class="nav-buttons">
-              <button onclick="prevPage(3)">⬅️ 上一頁</button>
-              <button onclick="nextPage(5)">下一頁 ➡️</button>
-          </div>
-      </div>
-  
-      <div class="card-page" id="card6">
-        <p>這個世界很大，</p>
-        <p>我們能相遇，</p>
-        <p>是一種奇蹟。</p>
-        <div class="nav-buttons">
-            <button onclick="prevPage(4)">⬅️ 上一頁</button>
-            <button onclick="nextPage(6)">下一頁 ➡️</button>
+
+    <!-- 卡片內容 -->
+    <div class="card-container" id="card">
+        <div class="card-content">
+            <h2>💖 給我最愛的寶寶 💖</h2>
+            <p id="card-text"></p>
+            <div class="nav-buttons">
+                <button onclick="prevCard()" id="prevBtn" disabled>⬅️ 上一頁</button>
+                <button onclick="nextCard()" id="nextBtn">下一頁 ➡️</button>
+                <button onclick="endCard()" id="endBtn" class="hidden">結束</button>
+            </div>
         </div>
     </div>
-    
-    <div class="card-page" id="card7">
-        <p>這個世界很亂，</p>
-        <p>但我知道，</p>
-        <p>妳是我唯一的答案。</p>
-        <div class="nav-buttons">
-            <button onclick="prevPage(5)">⬅️ 上一頁</button>
-            <button onclick="nextPage(7)">下一頁 ➡️</button>
-        </div>
-    </div>
-    
-    <div class="card-page" id="card8">
-        <p>未來或許會有挫折，</p>
-        <p>但請相信，</p>
-        <p>我會一直在妳身邊。</p>
-        <div class="nav-buttons">
-            <button onclick="prevPage(6)">⬅️ 上一頁</button>
-            <button onclick="nextPage(8)">下一頁 ➡️</button>
-        </div>
-    </div>
-    
-    <div class="card-page" id="card9">
-        <p>不只是今天，</p>
-        <p>不只是七天，</p>
-        <p>而是直到生命的終點。</p>
-        <div class="nav-buttons">
-            <button onclick="prevPage(7)">⬅️ 上一頁</button>
-            <button onclick="nextPage(9)">下一頁 ➡️</button>
-        </div>
-    </div>
-    
-    <div class="card-page" id="card10">
-        <p>這一生，</p>
-        <p>我只想愛妳，</p>
-        <p>直到世界的盡頭。</p>
-        <div class="nav-buttons">
-            <button onclick="prevPage(8)">⬅️ 上一頁</button>
-            <button onclick="nextPage(10)">下一頁 ➡️</button>
-        </div>
-    </div>
-    
-    <div class="card-page" id="card11">
-        <h2>💖  我愛妳 💖</h2>
-        <p>~~~寶寶~~~</p>
-        <p>我永遠愛妳~~~~~💖</p>
-        <div class="nav-buttons">
-            <button onclick="prevPage(9)">⬅️ 上一頁</button>
-        </div>
-    </div>
-    
-  </div>
+
     <script>
+        let currentCardIndex = 0;
+        const cardTexts = [
+            "七天，說長不長，說短不短，但對我來說，這是世界上最珍貴的七天。",
+            "七天前，我們在一起了，從那一刻開始，我的世界多了一道最耀眼的光。",
+            "妳就像是燈塔，在我生命裡發光，讓我即使在人生的黑夜裡，也有方向，也有勇氣。",
+            "這七天裡，我記得的每一個畫面，第一次牽起妳的手，第一次看見妳的笑。",
+            "這個世界很大，我們能相遇，是一種奇蹟。",
+            "<<寒與豔陽>>",
+            "寒是冬夜的靜謐，無聲無息，卻蘊藏無盡的溫柔。",
+            "豔陽是晨曦的熱烈，炙熱卻不刺眼，只為她而發光。",
+            "寒夜裡，豔陽走近了，不驚擾寒的寧靜，卻為寒帶來光與暖。",
+            "這一生，寒與豔陽不再分離，因為彼此已是唯一。",
+            "💖 我愛妳 💖"
+        ];
+
         function startSite() {
             document.querySelector('.start-button').classList.add('hidden');
             document.getElementById('bg-music').play();
-            setTimeout(() => {
-                document.getElementById('gallery').classList.remove('hidden');
-            }, 1000);
+            document.getElementById('gallery').classList.remove('hidden');
         }
 
-        function showCardPage() {
+        function showCard() {
             document.getElementById('gallery').classList.add('hidden');
-            document.getElementById('card-pages').classList.remove('hidden');
-            document.querySelectorAll('.card-page').forEach(page => page.style.display = 'none');
-            document.getElementById('card1').style.display = 'flex';
+            document.getElementById('card').style.display = 'block';
+            updateCard();
         }
 
-        function nextPage(index) {
-            document.querySelectorAll('.card-page').forEach(page => page.style.display = 'none');
-            document.getElementById(`card${index + 1}`).style.display = 'flex';
+        function nextCard() {
+            if (currentCardIndex < cardTexts.length - 1) {
+                currentCardIndex++;
+                updateCard();
+            }
         }
 
-        function prevPage(index) {
-            document.querySelectorAll('.card-page').forEach(page => page.style.display = 'none');
-            document.getElementById(`card${index}`).style.display = 'flex';
+        function prevCard() {
+            if (currentCardIndex > 0) {
+                currentCardIndex--;
+                updateCard();
+            }
+        }
+
+        function endCard() {
+            document.getElementById('card').style.display = 'none';
+            document.getElementById('gallery').classList.remove('hidden');
+        }
+
+        function updateCard() {
+            document.getElementById('card-text').textContent = cardTexts[currentCardIndex];
+            document.getElementById('prevBtn').disabled = (currentCardIndex === 0);
+            document.getElementById('nextBtn').classList.toggle('hidden', currentCardIndex === cardTexts.length - 1);
+            document.getElementById('endBtn').classList.toggle('hidden', currentCardIndex !== cardTexts.length - 1);
         }
     </script>
 </body>
